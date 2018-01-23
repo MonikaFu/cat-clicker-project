@@ -1,7 +1,9 @@
 (function () {
     const imageContainer = document.querySelector('#image-container');
-    let counter = 0;
+    let counters = [0,0];
     const countMessage = document.querySelector('#click-count-message')
+    const nrImages = 2;
+    const catNames = ['Fred', 'Jack'];
 
     fetch('https://api.unsplash.com/search/photos?page=1&query=kitten', {
     headers: {
@@ -9,37 +11,44 @@
     }
 	}).then(response => response.json())
 	.then(addImage)
-	.catch(e => requestError(e, 'image'));
+	.then(function(){
+		$('.cat-pic').click(function (e) {
+			picNr=Number($(this).id);
+			console.log(picNr)
+			$(this).counter+=1;
+			$(this).siblings('.count-message').text(`You've clicked ${$(this).counter} times.`);
+		});
+	})
+	.catch(e => requestError(e, 'image')); 
 
 	function addImage(data) {
-		let htmlConent = '';
+		let htmlContent = '';
 
-		const firstImage = data.results[0];
+		//const firstImage = data.results[0];
 
-		if (firstImage) {
-			htmlConent = `<figure>
-				<img src="${firstImage.urls.regular}" alt="Cat picture">
-				<figcaption>Cat picture by ${firstImage.user.name}</figcaption>
-			</figure>`
+		if (data && data.results && data.results.length>nrImages) {
+			for (i=0;i<=nrImages-1;i++){
+				let image = data.results[i];
+				htmlContent = htmlContent+`<div class="col-md-6">
+					<p>This is ${catNames[i]}.</p>
+					<p class="count-message">You've clicked on him ${counters[i]} times.</p>
+					<figure>
+						<img src="${image.urls.regular}" alt="Cat picture" class="cat-pic" id="${i}">
+						<figcaption>Cat picture by ${image.user.name}</figcaption>
+					</figure>
+				</div>`
+			}
 		} else {
-			htmlConent = 'Unfortunately, no image was returned for your search.'
+			htmlCotnent = 'Unfortunately, no image was returned for your search.'
 		}
 
-		imageContainer.insertAdjacentHTML('afterbegin',htmlConent);
+		imageContainer.insertAdjacentHTML('afterbegin',htmlContent);
 	}
 
 	function requestError(e, part) {
 		console.log(e);
 		imageContainer.insertAdjacentHTML('beforeend',`<p class="network-warning">Oh no! There was an error making the request for ${part}.</p>`);
 	};
-
-	function reportClickCount(nr) {
-		let txt = `You've clicked ${nr} times.`;
-		$('#click-count-message').text(txt);
-	};
-
-	imageContainer.addEventListener('click', function(){
-	  counter+=1;
-	  reportClickCount(counter);
-	}, false);
 })();
+
+
