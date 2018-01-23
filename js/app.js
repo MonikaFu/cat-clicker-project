@@ -13,10 +13,10 @@
 	.then(addImage)
 	.then(function(){
 		$('.cat-pic').click(function (e) {
-			picNr=Number($(this).id);
-			console.log(picNr)
-			$(this).counter+=1;
-			$(this).siblings('.count-message').text(`You've clicked ${$(this).counter} times.`);
+			picNr=Number(this.id);
+			debugger;
+			counters[picNr]+=1;
+			$(this).parent().siblings('.count-message').text(`You've clicked ${ counters[picNr]} times.`);
 		});
 	})
 	.catch(e => requestError(e, 'image')); 
@@ -50,5 +50,6 @@
 		imageContainer.insertAdjacentHTML('beforeend',`<p class="network-warning">Oh no! There was an error making the request for ${part}.</p>`);
 	};
 })();
+
 
 
