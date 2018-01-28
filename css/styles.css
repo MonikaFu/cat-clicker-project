@@ -9,3 +9,17 @@ img {
 ul {
 	list-style: none;
 }
+
+form {
+	visibility: hidden;
+	margin-top: 10px;
+}
+
+button {
+	margin-top: 20px;
+}
+
+#cancel-button {
+	margin-top: 10px;
+	visibility: hidden;
+}

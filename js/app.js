@@ -120,6 +120,18 @@
     		model.updateCat(currentCat);
     	},
 
+    	updateCurrentCat:  function(name, url, author, clicks) {
+    		let currentCat = octopus.getCurrentCat();
+    		currentCat.name = name;
+    		currentCat.url = url;
+    		currentCat.author = author;
+    		currentCat.clicks = Number(clicks);
+
+    		model.updateCat(currentCat);
+    		viewClick.render();
+    		viewList.render();
+    	},
+
     	init: function(url,header,nrImages,names) {
     		model.init(nrImages);
     		viewClick.init();
@@ -140,8 +152,21 @@
 				<p id="count-message">You've clicked on him ${0} times.</p>
 				<figure>
 					<img src="${''}" alt="Cat picture" id="cat-pic-click">
-					<figcaption>Cat picture by ${''}</figcaption>
+					<figcaption id="fig-caption">Cat picture by ${''}</figcaption>
 				</figure>
+				<button type="button" id="admin-button">Admin</button>
+				<form id="admin-form">
+					Cat's name:<br>
+					<input type="text" name="cat-name"><br>
+					Cat's url:<br>
+					<input type="text" name="cat-url"><br>
+					Author of the cat picture:<br>
+					<input type="text" name="cat-pic-author"><br>
+					Number of clicks:<br>
+					<input type="text" name="clicks-number"><br>
+					<input type="submit" value="Submit">
+				</form>
+				<button type="button" id="cancel-button">Cancel</button>
 			</div>`
 
 			viewClickDiv.html(htmlContent);
@@ -153,6 +178,34 @@
 				
 				$('#count-message').text(`You've clicked ${currentCat.clicks} times.`);
 			});
+
+    		$('#admin-button').click(function() {
+    			$('#admin-form').css('visibility','visible')
+    			$('#cancel-button').css('visibility','visible')
+    		});
+
+    		$('#cancel-button').click(function() {
+    			$('#admin-form').css('visibility','hidden')
+    			$('#cancel-button').css('visibility','hidden')
+    		})
+
+    		$('#admin-form').submit(function(event) {
+    			let newName = $('input[name=cat-name]').val();
+    			let newUrl = $('input[name=cat-url]').val();
+    			let newAuthor = $('input[name=cat-pic-author]').val();
+    			let newClicks = $('input[name=clicks-number]').val();
+
+    			octopus.updateCurrentCat(newName, newUrl, newAuthor,newClicks);
+
+    			$(':input','#admin-form')
+ 				.not(':button, :submit, :reset, :hidden')
+ 				.val('');
+ 				debugger;
+ 				$('#admin-form').css('visibility','hidden')
+    			$('#cancel-button').css('visibility','hidden')
+
+    			event.preventDefault();
+    		})
     	},
 
     	render: function() {
@@ -164,6 +217,7 @@
     		nameMessage.html(`This is ${currentCat.name}.`);
     		countMessage.html(`You've clicked ${currentCat.clicks} times.`);
     		catPic.attr('src',currentCat.url);
+    		$('#fig-caption').html(`Cat picture by ${currentCat.author}`)
     	},
 
     	displayRequestError: function(part) {
